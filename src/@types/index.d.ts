@@ -107,4 +107,5 @@ export type DuoDragDropRef = {
   setOffsets(newOffsets: number[]): void;
   reorderWords: () => void;
   reorderOneWord: () => void;
+  reorderWordsTwice: () => void;
 };

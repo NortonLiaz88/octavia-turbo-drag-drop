@@ -1,5 +1,5 @@
 {
-  "name": "@nortonliaz/react-native-turbo-drag-drop",
+  "name": "react-native-turbo-drag-drop",
   "version": "0.1.1",
   "description": "a react-native implementation of drag and drop",
   "main": "./lib/module/index.js",
@@ -39,7 +39,8 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prepare": "bob build",
-    "release": "release-it --only-version"
+    "release": "release-it --only-version",
+    "gen": "cd example/android && ./gradlew generateCodegenArtifactsFromSchema && cd ../.."
   },
   "keywords": [
     "react-native",
@@ -50,7 +51,7 @@
     "type": "git",
     "url": "git+https://github.com/NortonLiaz88/octavia-turbo-drag-drop.git"
   },
-  "author": "nortonliaz99 <nortonliaz@gmail.com> (https://github.com/NortonLiaz88)",
+  "author": "norton (https://github.com/nortonliaz88)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/NortonLiaz88/octavia-turbo-drag-drop/issues"

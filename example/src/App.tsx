@@ -140,7 +140,7 @@ export default function App() {
             <Button
               title={`Reorder`}
               onPress={() => {
-                duoDragDropRef.current?.reorderWords();
+                duoDragDropRef.current?.reorderWordsTwice();
               }}
             />
           </View>

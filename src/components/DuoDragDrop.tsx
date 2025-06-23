@@ -69,6 +69,65 @@ const DuoDragDrop = React.forwardRef<DuoDragDropRef, DuoDragDropProps>(
       originalY: useSharedValue(0),
     }));
 
+    const reorderWordsFn = () => {
+      if (!layout || containerWidth === 0) {
+        console.warn('[TurboDragDrop] Layout ainda não inicializado');
+        return;
+      }
+
+      const widths = offsets.map((o) => o.width.value);
+      if (widths.some((w) => w <= 0)) {
+        console.warn('[TurboDragDrop] Widths ainda não definidos');
+        return;
+      }
+
+      const targetMap = new Map(target.map((word, index) => [word, index]));
+
+      const wordsInBank: string[] = [];
+      const wordsInAnswered: string[] = [];
+      offsets.forEach((offset, index) => {
+        const word = words[index]!;
+        if (offset.order.value === -1) {
+          wordsInBank.push(word);
+        } else {
+          wordsInAnswered.push(word);
+        }
+      });
+
+      const completeAnsweredWords = [...wordsInAnswered];
+      target.forEach((word) => {
+        if (
+          !completeAnsweredWords.includes(word) &&
+          wordsInBank.includes(word)
+        ) {
+          completeAnsweredWords.push(word);
+        }
+      });
+
+      const newOrders = words.map((word) => targetMap.get(word) ?? -1);
+      for (let i = 0; i < offsets.length; i++) {
+        offsets[i]!.order.value = newOrders[i]!;
+      }
+
+      const orders = offsets.map((o) => o.order.value);
+      const positions = calculateLayoutWithNative(
+        orders,
+        widths,
+        containerWidth,
+        wordHeight,
+        wordGap,
+        lineGap,
+        !!rtl
+      );
+
+      runOnUI(() => {
+        'worklet';
+        for (let i = 0; i < positions.length; i++) {
+          offsets[i]!.x.value = positions[i]!.x;
+          offsets[i]!.y.value = positions[i]!.y;
+        }
+      })();
+    };
     useImperativeHandle(ref, () => ({
       getWords: () => {
         const answeredWords: { word: string; order: number }[] = [];
@@ -148,67 +207,8 @@ const DuoDragDrop = React.forwardRef<DuoDragDropRef, DuoDragDropProps>(
         })();
       },
       reorderWords: () => {
-        // Step 1: Create a mapping of target words and their desired order
-        const targetMap = new Map(target.map((word, index) => [word, index]));
-
-        // Step 2: Identify words in the bank that should be in answered
-        const wordsInBank: string[] = [];
-        const wordsInAnswered: string[] = [];
-        offsets.forEach((offset, index) => {
-          const word = words[index];
-          if (offset.order.value === -1) {
-            wordsInBank.push(word!);
-          } else {
-            wordsInAnswered.push(word!);
-          }
-        });
-
-        // Step 3: Fill missing words from the bank to answeredWords
-        const completeAnsweredWords = [...wordsInAnswered];
-        target.forEach((word) => {
-          if (
-            !completeAnsweredWords.includes(word) &&
-            wordsInBank.includes(word)
-          ) {
-            completeAnsweredWords.push(word);
-          }
-        });
-
-        // Step 4: Create an array with the new orders for each word
-        const newOrders = words.map((word) => targetMap.get(word) ?? -1);
-
-        // Step 5: Atualiza ordens diretamente na JS thread
-        for (let i = 0; i < offsets.length; i++) {
-          offsets[i]!.order.value = newOrders[i]!;
-        }
-
-        // Step 6: Prepara os dados para o cálculo nativo
-        const orders = offsets.map((o) => o.order.value);
-        const widths = offsets.map((o) => o.width.value);
-
-        // Step 7: Executa o cálculo no TurboModule síncrono (Kotlin)
-        const positions = calculateLayoutWithNative(
-          orders,
-          widths,
-          containerWidth,
-          wordHeight,
-          wordGap,
-          lineGap,
-          !!rtl
-        );
-
-        console.log('Application Positions', positions);
-        console.log(positions instanceof Promise);
-        // Step 8: Aplica os resultados com runOnUI
-        runOnUI(() => {
-          'worklet';
-          for (let i = 0; i < positions.length; i++) {
-            offsets[i]!.x.value = positions[i]!.x;
-            offsets[i]!.y.value = positions[i]!.y;
-          }
-        })();
+        reorderWordsFn();
       },
-
       reorderOneWord: () => {
         // Cria um array para rastrear índices já usados no target
         const usedIndices = new Array(target.length).fill(false);
@@ -250,6 +250,26 @@ const DuoDragDrop = React.forwardRef<DuoDragDropRef, DuoDragDropProps>(
             offsets[i]!.y.value = positions[i]!.y;
           }
         })();
+      },
+      reorderWordsTwice: async () => {
+        const widths = offsets.map((o) => o.width.value);
+        if (widths.some((w) => w <= 0)) {
+          console.warn(
+            '[TurboDragDrop] Larguras não definidas. Cancelando reorderWordsTwice.'
+          );
+          return;
+        }
+
+        await new Promise((resolve) =>
+          requestAnimationFrame(() => resolve(null))
+        );
+
+        reorderWordsFn();
+
+        // Segunda chamada no próximo frame, após UI thread reagir
+        setTimeout(() => {
+          reorderWordsFn();
+        }, 0);
       },
     }));
 
