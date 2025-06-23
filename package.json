@@ -59,7 +59,7 @@
   "homepage": "https://github.com/NortonLiaz88/octavia-turbo-drag-drop#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
-    "access": "restricted"
+    "access": "public"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.6.0",
