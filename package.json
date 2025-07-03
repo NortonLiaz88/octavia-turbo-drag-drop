@@ -12,7 +12,6 @@
     },
     "./package.json": "./package.json"
   },
-  "type": "module",
   "files": [
     "src",
     "lib",
