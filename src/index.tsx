@@ -6,7 +6,7 @@ export function multiply(a: number, b: number): number {
 }
 
 export function move(input: number[], from: number, to: number): number[] {
-  return TurboDragDrop.move(input, from, to).result;
+  return TurboDragDrop.move(input, from, to);
 }
 
 export function between(
@@ -23,15 +23,15 @@ export function lastOrder(orders: number[]): number {
 }
 
 export function remove(orders: number[], index: number): number[] {
-  return TurboDragDrop.remove(orders, index).result;
+  return TurboDragDrop.remove(orders, index);
 }
 
 export function reorder(orders: number[], from: number, to: number): number[] {
-  return TurboDragDrop.reorder(orders, from, to).result;
+  return TurboDragDrop.reorder(orders, from, to);
 }
 
 export function measureWords(viewTags: number[]): WordMeasurement[] {
-  return TurboDragDrop.measureWords(viewTags).result;
+  return TurboDragDrop.measureWords(viewTags);
 }
 
 export function calculateLayout(
@@ -51,7 +51,7 @@ export function calculateLayout(
     wordGap,
     lineGap,
     rtl
-  ).result;
+  );
 }
 
 // Component exports

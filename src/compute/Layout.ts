@@ -169,5 +169,5 @@ export const calculateLayoutWithNative = (
     wordGap,
     lineGap,
     rtl
-  ).result;
+  );
 };
