@@ -154,14 +154,6 @@
       ]
     ]
   },
-  "codegenConfig": {
-    "name": "TurboDragDropSpec",
-    "type": "modules",
-    "jsSrcsDir": "src",
-    "android": {
-      "javaPackageName": "com.turbodragdrop"
-    }
-  },
   "create-react-native-library": {
     "languages": "kotlin-objc",
     "type": "turbo-module",

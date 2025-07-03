@@ -2,6 +2,8 @@ package com.turbodragdrop
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableNativeArray
@@ -11,19 +13,20 @@ import com.facebook.react.uimanager.UIManagerHelper
 
 @ReactModule(name = TurboDragDropModule.NAME)
 class TurboDragDropModule(reactContext: ReactApplicationContext) :
-  NativeTurboDragDropSpec(reactContext) {
+  ReactContextBaseJavaModule(reactContext) {
 
+  // Este é o único método que deve ter "override"
   override fun getName(): String {
     return NAME
   }
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
-  override fun multiply(a: Double, b: Double): Double {
+  @ReactMethod
+  fun multiply(a: Double, b: Double): Double {
     return a * b
   }
 
-  override fun move(input: ReadableArray, from: Double, to: Double): WritableNativeArray {
+  @ReactMethod
+  fun move(input: ReadableArray, from: Double, to: Double): WritableNativeArray {
     val list = mutableListOf<Double>()
     for (i in 0 until input.size()) {
       list.add(input.getDouble(i))
@@ -42,11 +45,13 @@ class TurboDragDropModule(reactContext: ReactApplicationContext) :
     return result
   }
 
-  override fun between(value: Double, min: Double, max: Double, inclusive: Boolean): Boolean {
+  @ReactMethod
+  fun between(value: Double, min: Double, max: Double, inclusive: Boolean): Boolean {
     return if (inclusive) value in min..max else value > min && value < max
   }
 
-  override fun lastOrder(orders: ReadableArray): Double {
+  @ReactMethod
+  fun lastOrder(orders: ReadableArray): Double {
     var count = 0
     for (i in 0 until orders.size()) {
       if (orders.getDouble(i).toInt() != -1) {
@@ -56,7 +61,8 @@ class TurboDragDropModule(reactContext: ReactApplicationContext) :
     return count.toDouble()
   }
 
-  override fun remove(orders: ReadableArray, index: Double): WritableNativeArray {
+  @ReactMethod
+  fun remove(orders: ReadableArray, index: Double): WritableNativeArray {
     val idx = index.toInt()
     val list = mutableListOf<Int>()
     for (i in 0 until orders.size()) {
@@ -70,7 +76,8 @@ class TurboDragDropModule(reactContext: ReactApplicationContext) :
     return result
   }
 
-  override fun reorder(orders: ReadableArray, from: Double, to: Double): WritableNativeArray {
+  @ReactMethod
+  fun reorder(orders: ReadableArray, from: Double, to: Double): WritableNativeArray {
     val values = mutableListOf<Int>()
     for (i in 0 until orders.size()) {
       val value = orders.getDouble(i).toInt()
@@ -90,7 +97,8 @@ class TurboDragDropModule(reactContext: ReactApplicationContext) :
     return result
   }
 
-  override fun measureWords(viewTags: ReadableArray): WritableNativeArray {
+  @ReactMethod
+  fun measureWords(viewTags: ReadableArray): WritableNativeArray {
     val result = WritableNativeArray()
 
     for (i in 0 until viewTags.size()) {
@@ -121,7 +129,8 @@ class TurboDragDropModule(reactContext: ReactApplicationContext) :
     return result
   }
 
-  override fun calculateLayout(
+  @ReactMethod
+  fun calculateLayout(
     orders: ReadableArray,
     widths: ReadableArray,
     containerWidth: Double,
