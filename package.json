@@ -154,11 +154,6 @@
       ]
     ]
   },
-  "create-react-native-library": {
-    "languages": "kotlin-objc",
-    "type": "turbo-module",
-    "version": "0.51.1"
-  },
   "resolutions": {
     "strip-ansi": "6.0.0"
   },
